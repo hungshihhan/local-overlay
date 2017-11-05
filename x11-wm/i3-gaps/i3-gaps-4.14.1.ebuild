@@ -3,16 +3,17 @@
 
 EAPI=6
 
-inherit autotools
+AEVER=0.17
 
-DESCRIPTION="i3 with more features"
+inherit autotools virtualx
+
+DESCRIPTION="An improved dynamic tiling window manager"
 HOMEPAGE="https://github.com/Airblader/i3"
 SRC_URI="https://github.com/Airblader/i3/archive/${PV}.tar.gz -> ${P}.tar.gz"
-
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="amd64 ~arm x86"
-IUSE=""
+KEYWORDS="~amd64 ~x86"
+IUSE="doc debug test"
 
 S=${WORKDIR}/i3-${PV}
 
@@ -30,28 +31,67 @@ CDEPEND="dev-libs/libev
 	>=x11-libs/cairo-1.14.4[X,xcb]
 	>=x11-libs/pango-1.30.0[X]"
 DEPEND="${CDEPEND}
+	app-text/asciidoc
+	doc? ( app-text/xmlto dev-lang/perl )
+	test? (
+		dev-perl/AnyEvent
+		>=dev-perl/X11-XCB-0.120.0
+		dev-perl/Inline
+		dev-perl/Inline-C
+		dev-perl/IPC-Run
+		dev-perl/ExtUtils-PkgConfig
+		dev-perl/local-lib
+		>=virtual/perl-Test-Simple-0.940.0
+		x11-base/xorg-server[xephyr]
+	)
 	virtual/pkgconfig"
 RDEPEND="${CDEPEND}
 	dev-lang/perl
 	dev-perl/AnyEvent-I3
-	dev-perl/JSON-XS
-	!x11-wm/i3"
+	dev-perl/JSON-XS"
 
-DOCS=( RELEASE-NOTES-${PV} )
-PATCHES[0]="${FILESDIR}/i3-musl-GLOB_TILDE.patch"
+# Test without debug will apply optimization levels, which results
+# in type-punned pointers - which in turn causes test failures.
+REQUIRED_USE="test? ( debug )"
+
+DOCS=(
+	"RELEASE-NOTES-${PV}"
+	docs
+)
+PATCHES=(
+	"${FILESDIR}/i3-musl-GLOB_TILDE.patch"
+)
+
+# https://github.com/i3/i3/issues/3013
+RESTRICT="test"
+
+src_test() {
+	emake -C "${CBUILD}" \
+		test.commands_parser \
+		test.config_parser \
+		test.inject_randr15
+
+	virtx perl \
+		-I "${S}/testcases/lib" \
+		-I "${CBUILD}/testcases/lib" \
+		"${CBUILD}/testcases/complete-run.pl"
+}
 
 src_prepare() {
 	default
-	sed -e '/AC_PATH_PROG(\[PATH_ASCIIDOC/d' -i configure.ac || die
-	eautoreconf
+
 	cat <<- EOF > "${T}"/i3wm
 		#!/bin/sh
 		exec /usr/bin/i3
 	EOF
+
+	eautoreconf
 }
 
 src_configure() {
-	local myeconfargs=( --enable-debug=no )  # otherwise injects -O0 -g
+	local myeconfargs=(
+		$(use_enable debug)
+	)
 	econf "${myeconfargs[@]}"
 }
 
@@ -61,10 +101,12 @@ src_compile() {
 
 src_install() {
 	emake -C "${CBUILD}" DESTDIR="${D}" install
-	einstalldocs
+	# doman "${S}"/man/*.1
+
+	use doc && einstalldocs
 
 	exeinto /etc/X11/Sessions
-	doexe "${T}"/i3wm
+	doexe "${T}/i3wm"
 }
 
 pkg_postinst() {
