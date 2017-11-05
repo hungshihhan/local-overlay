@@ -48,7 +48,8 @@ DEPEND="${CDEPEND}
 RDEPEND="${CDEPEND}
 	dev-lang/perl
 	dev-perl/AnyEvent-I3
-	dev-perl/JSON-XS"
+	dev-perl/JSON-XS
+	!x11-wm/i3"
 
 # Test without debug will apply optimization levels, which results
 # in type-punned pointers - which in turn causes test failures.
