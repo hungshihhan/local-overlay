@@ -2,8 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="5"
-inherit pax-utils
+EAPI=5
+inherit pax-utils eutils xdg-utils
 
 if [ "${ARCH}" = "amd64" ] ; then
 		LNXARCH="linux-x86_64"
@@ -69,3 +69,7 @@ src_install() {
 	fi
 }
 
+pkg_postinst() {
+	# Update mimedb for the new .desktop file
+	xdg_desktop_database_update
+}
