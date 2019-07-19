@@ -1,2 +1,4 @@
 amd64 hardened/desktop dev
 amd64 hardened/desktop/plasma dev
+amd64 no-multilib/desktop dev
+amd64 no-multilib/desktop/plasma dev
