@@ -1,0 +1,10 @@
+--- zotero.desktop	2019-07-23 15:24:36.000000000 -0400
++++ zotero.desktop.new	2019-07-23 19:37:49.029108648 -0400
+@@ -1,6 +1,6 @@
+ [Desktop Entry]
+ Name=Zotero
+-Exec=bash -c "$(dirname $(readlink -f %k))/zotero -url %U"
++Exec=bash -c "zotero -url %U"
+ Icon=zotero.ico
+ Type=Application
+ Terminal=false
