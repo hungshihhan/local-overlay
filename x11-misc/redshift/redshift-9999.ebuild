@@ -20,7 +20,7 @@ fi
 
 LICENSE="GPL-3"
 SLOT="0"
-IUSE="appindicator geoclue gtk nls"
+IUSE="appindicator geoclue gtk nls wayland"
 
 COMMON_DEPEND=">=x11-libs/libX11-1.4
 	x11-libs/libXxf86vm
@@ -59,7 +59,7 @@ src_configure() {
 		\
 		$(use_enable gtk gui) \
 		--with-systemduserunitdir="$(systemd_get_userunitdir)" \
-		--enable-wayland  \
+		$(use_enable wayland)  \
 		--enable-apparmor \
 		--disable-quartz \
 		--disable-ubuntu
