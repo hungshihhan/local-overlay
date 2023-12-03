@@ -18,8 +18,7 @@ RDEPEND="net-firewall/iptables
 	sys-apps/iproute2"
 
 src_install() {
-	sed -i "s/\'/\"/g" ${S}/src/desktop/wifihotspot.desktop
-	doicon ${S}/src/desktop/icons
-	# domenu ${S}/src/desktop/wifihotspot.desktop
-	dodoc -r ${S}/docs 
+	emake DESTDIR="${D}" install
+	mv ${D}/usr/share/doc/create_ap ${D}/usr/share/doc/${P}
+	sed -i "s/\'/\"/g" ${D}/usr/share/applications/wihotspot.desktop
 }
