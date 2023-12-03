@@ -4,3 +4,4 @@ amd64 no-multilib/desktop dev
 amd64 no-multilib/desktop/plasma dev
 amd64 no-multilib/desktop/plasma/systemd dev
 amd64 no-multilib/systemd/desktop dev
+amd64 no-multilib/systemd/desktop/gnome dev
