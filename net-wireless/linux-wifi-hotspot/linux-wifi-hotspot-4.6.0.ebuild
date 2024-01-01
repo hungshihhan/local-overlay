@@ -12,10 +12,13 @@ LICENSE="BSD-2"
 SLOT=0
 KEYWORDS="amd64"
 
-RDEPEND="net-firewall/iptables
+RDEPEND="
+	media-gfx/qrencode
+	net-firewall/iptables
 	net-wireless/hostapd
 	net-dns/dnsmasq
-	sys-apps/iproute2"
+	sys-apps/iproute2
+	"
 
 src_install() {
 	emake DESTDIR="${D}" install
